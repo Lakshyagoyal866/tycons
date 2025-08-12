@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <title>Document</title>
+
+    <script>
+        var mymoudle = angular.module("kuchModule", []);
+
+        mymoudle.controller("kuchController", function ($scope, $http) {
+            $scope.jsonArray = [];
+
+            $scope.doFetchAll = function () {
+                // let email=$scope.txtEmail4;
+
+                var url = "/do-fetch-all-users?emailidKuch=" + localStorage.getItem("activeUser");
+
+
+                $http.get(url).then(allGoodFx, someBadFx);
+                function allGoodFx(response) {
+                    //resp in JSON array
+                    //alert(JSON.stringify(response.data));
+                    $scope.jsonArray = response.data;
+                }
+
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
+                }
+            }
+
+
+
+            $scope.doDelete = function (rid) {
+
+                var url = "/delete-one?ridno=" + rid;
+
+                $http.get(url).then(allGoodFx, someBadFx);
+                function allGoodFx(response) {
+                    alert(response.data);   //resp in string
+                    $scope.doFetchAll();
+                }
+
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
+                }
+            }
+
+            $scope.participants = [];
+            $scope.viewparticipation = function (tournamentid) {
+                var url = "/view-participants?tournamentid=" + tournamentid;
+
+                $http.get(url).then(allgood, somebad);
+                function allgood(response) {
+                    // alert(JSON.stringify(response.data));
+                    $scope.participants=response.data;
+
+                }
+                function somebad(response) {
+                    alert(JSON.stringify(response.data));
+                }
+            }
+
+
+        })
+    </script>
+
+</head>
+
+<body ng-app="kuchModule" ng-controller="kuchController" ng-init="doFetchAll();">
+
+    <form>
+
+        <div class="row bg-primary text-white "> <span class="py-2 offset-md-5 ">
+                <h2>Post Tournaments</h2>
+            </span> </div>
+        <div class="container">
+            <div class="row">
+
+                <!-- <div class=" mt-4  col-md-6">
+                    <label for="floatingInput" class="form-label">Email address</label>
+                    <input type="email" name="txtEmail4" id="txtEmail4" class="form-control"
+                        placeholder="name@example.com" ng-model="txtEmail4">
+                </div>
+
+                <div class="col-md-4 mt-4">
+                    <button class="btn btn-dark px-5 py-2 mt-4"  type="button" ng-click="doFetchAll();"> Fetch data </button>
+                </div> -->
+
+
+            </div>
+        </div>
+
+        <table class="table table-hover mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">Sr no.</th>
+                    <!-- <th scope="col">Rid No.</th> -->
+                    <!-- <th scope="col">Email address</th> -->
+                    <th scope="col">Host Name</th>
+                    <!-- <th scope="col">Contact No.</th> -->
+                    <th scope="col">Event Title</th>
+                    <th scope="col">Date</th>
+                    <!-- <th scope="col">Time</th> -->
+                    <th scope="col">Address</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Sports Catagory</th>
+                    <!-- <th scope="col">Max. Age</th> -->
+                    <!-- <th scope="col">Min. Age</th> -->
+                    <!-- <th scope="col">Last date of Registration</th> -->
+                    <!-- <th scope="col">Registration Fees</th> -->
+                    <!-- <th scope="col">Prize</th> -->
+                    <th scope="col">Operation</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="obj in jsonArray">
+                    <td scope="row"> {{$index+1}}</td>
+                    <!-- <td>{{obj.rid}}</td> -->
+                    <!-- <td>{{obj.email}}</td> -->
+                    <td>{{obj.hname}}</td>
+                    <!-- <td>{{obj.mobile}}</td> -->
+                    <td>{{obj.title}}</td>
+                    <td>{{obj.tdate}}</td>
+                    <!-- <td>{{obj.ttime}}</td> -->
+                    <td>{{obj.address}}</td>
+                    <td>{{obj.city}}</td>
+                    <td>{{obj.sports}}</td>
+                    <!-- <td>{{obj.maxage}}</td> -->
+                    <!-- <td>{{obj.minage}}</td> -->
+                    <!-- <td>{{obj.rdate}}</td> -->
+                    <!-- <td>{{obj.fees}}</td> -->
+                    <!-- <td>{{obj.prize}}</td> -->
+                    <td>
+                        <input type="button" ng-click="doDelete(obj.rid);" value="Remove"
+                            class="btn btn-primary px-4 py-2 ">
+                        <input type="button" ng-click="viewparticipation(obj.rid);" data-bs-toggle="modal"
+                            data-bs-target="#participateplayer" value="See Players" class="btn btn-primary px-4 py-2  ">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </form>
+
+
+    <!-- Modal for See players -->
+    <div class="modal fade" id="participateplayer" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Sr no.</th>
+                                <th scope="col">Player Email ID</th>
+                                <th scope="col">Player Name</th>
+                                <th scope="col">Player contact No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="p in participants">
+                                 <td>{{$index + 1}}</td>
+                                 <td>{{p.email}}</td>
+                                <td>{{p.rname}}</td>
+                                <td>{{p.contact}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of see player modal  -->
+</body>
+
+</html>

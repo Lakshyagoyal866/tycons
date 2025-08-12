@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@google/genai": "^1.9.0",
+    "@google/generative-ai": "^0.24.1",
+    "bootstrap-icons": "^1.13.1",
+    "cloudinary": "^2.7.0",
+    "express": "^5.1.0",
+    "express-file": "^1.0.0",
+    "express-fileupload": "^1.5.2",
+    "express.js": "^1.0.0",
+    "git": "^0.1.5",
+    "init": "^0.1.2",
+    "mysql2": "^3.14.1",
+    "nodemailer": "^7.0.5",
+    "nodemon": "^3.1.10"
+  },
+  "name": "nodejs.project1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

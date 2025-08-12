@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#fetchdata").click(function () {
+                let email = $("#txtEmail").val();
+                let pwd = $("#txtPwd").val();
+                let combo = $("#combouser").val();
+
+                let obj = {
+                    type: "get",
+                    url: "/signup",
+                    data: {
+                        txtEmail: email,
+                        txtPwd: pwd,
+                        combouser: combo
+
+                    }
+                }
+
+                $.ajax(obj).then(
+                    function (responseJsonAry) {
+                        alert(JSON.stringify(responseJsonAry));
+                        //   let email=responseJsonAry[0].email;
+                        // let pwd=responseJsonAry[0].pwd;
+                        //  let combo=responseJsonAry[0].combo;
+
+                        //  alert(email+"\n"+pwd+"\n "+combo);
+
+                    }).fail(function (err) {
+                        alert(err.message);
+                    })
+
+
+            })
+
+            //--------Signup  check email--------------
+            $("#txtEmail").keyup(function () {
+                let obj = {
+                    type: "get",
+                    url: "/chk-email",
+                    data: {
+                        txtEmail: $("#txtEmail").val(),
+                    }
+                };
+
+                $.ajax(obj).then(function (response) {
+
+                    $(chkEmail).html(response)
+                }).fail(function (err) {
+                    alert(err);
+                })
+
+            })
+
+
+            $("#eye").click(function () {
+                let txt = $("#txtPwd").prop("type");
+                if (txt == "password") {
+                    $("#txtPwd").prop("type", "text");
+                    $("#eye").removeClass("fa-eye").addClass(" fa-eye-slash");
+                }
+
+                else {
+                    $("#txtPwd").prop("type", "password");
+                    $("#eye").removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+
+            })
+
+
+
+            // for login page :
+
+            $("#fetchdata2").click(function () {
+                let email = $("#txtEmail2").val();
+                let pwd = $("#txtPwd2").val();
+                // alert(email+" "+pwd);
+
+                let obj = {
+                    type: "get",
+                    url: "/login",
+                    data: {
+                        txtEmail2: email,
+                        txtPwd2: pwd,
+                    }
+                }
+
+                $.ajax(obj).then(
+                    function (response) {
+                        // alert("*"+response+"*");
+
+                        if (response == "Blocked")
+                            alert("Sorry!! Ur Id is Blocked");
+                        else if (response == "Invalid")
+                            alert("Invalid emailid or Password");
+                        else
+                            if (response == "Player") {
+                                localStorage.setItem("activeUser", email);
+                                location.href = "dash-player.html";
+                            }
+                            else if (response == "Organizer") {
+                                localStorage.setItem("activeUser", email);
+                                location.href = "dash-organzier.html";
+                            }
+                            else if (response == "Admin") {
+                                localStorage.setItem("activeUser", email);
+                                location.href = "dash-admin.html";
+                            }
+
+
+
+                    }).fail(function (err) {
+                        alert(err.message);
+                    })
+
+
+            })
+
+            $("#eye2").click(function () {
+                let txt = $("#txtPwd2").prop("type");
+                if (txt == "password") {
+                    $("#txtPwd2").prop("type", "text");
+                    $("#eye2").removeClass("fa-eye").addClass(" fa-eye-slash");
+                }
+
+                else {
+                    $("#txtPwd2").prop("type", "password");
+                    $("#eye2").removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            })
+
+
+
+
+            //----------------------for forget password----------------------------------
+            $("#eye3").click(function () {
+                let txt = $("#forgetPass").prop("type");
+                if (txt == "password") {
+                    $("#forgetPass").prop("type", "text");
+                    $("#eye3").removeClass("fa-eye").addClass(" fa-eye-slash");
+                }
+
+                else {
+                    $("#forgetPass").prop("type", "password");
+                    $("#eye3").removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            })
+        })
+    </script>
+
+    <script>
+
+        let mymodule = angular.module("myModuleKuch", []);
+        let myController = mymodule.controller("myControllerKuch", function ($scope, $http) {
+            $scope.jsonAry = [];
+            $scope.forgetEmail;
+            $scope.forgetPass;
+            $scope.confirmUser;
+            $scope.otpVerified = false;
+
+
+            $scope.doFetchAll = function () {
+                if (!$scope.otpVerified) {
+
+                    alert("Please verify OTP first.");
+                    return;
+                }
+
+                var url = "/Reset-password?email3Kuch=" + $scope.forgetEmail + "&resetpassKuch=" + $scope.forgetPass + "&userKuch=" + $scope.confirmUser;
+
+                $http.get(url).then(fxSuccess, fxFail);
+
+                function fxSuccess(response) {
+                    alert(response.data);
+                    $scope.jsonAry = response.data;
+                }
+                function fxFail(err) {
+                    alert(err.data);
+                }
+            }
+            //=========apply a otp system==============
+
+            $scope.otpSent = false;
+
+            $scope.doRequestotp = function () {
+                if (!$scope.forgetEmail || !$scope.confirmUser) {
+                    alert("Please fill Email and User Type");
+                    return;
+                }
+
+                var url = "/request-otp?email3Kuch=" + $scope.forgetEmail + "&userKuch=" + $scope.confirmUser;
+
+                $http.get(url).then(fxSuccess);
+                function fxSuccess(response) {
+                    alert(response.data);
+                    $scope.otpSent = true;
+
+                }
+
+            }
+
+            $scope.enteredotp;
+
+            $scope.doVerification = function () {
+
+                var url = "/verification-otp?email3Kuch=" + $scope.forgetEmail + "&otp=" + $scope.enteredotp + "&userKuch=" + $scope.confirmUser;
+
+                $http.get(url).then(fxSuccess);
+                function fxSuccess(response) {
+                    alert(response.data);
+
+                    if (response.data.includes("verified")) {
+                        $scope.otpVerified = true;
+                    }
+                }
+            }
+        })
+    </script>
+
+    <style>
+        .carousel-item img {
+            /* object-fit: cover; */
+            height: 450px;
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid #007bff;
+        }
+
+        .carousel {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #bfa074;
+        }
+
+
+        .card {
+            height: 250px;
+            box-shadow: 5px 2px 8px rgba(43, 23, 136, 0.08);
+            border-radius: 15px;
+            border: 2px solid #532fe2;
+            background: #65b7dd;
+            transition: transform 0.2s, box-shadow 0.2s;
+
+        }
+
+        .card:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(212, 209, 221, 0.12);
+            border-color: #0e69e9;
+        }
+
+               .map-responsive {
+            overflow: hidden;
+            padding-bottom: 56.25%;
+            position: relative;
+            height: 0;
+            border-radius: 12px;
+            border: 2px solid #bfa074;
+        }
+
+           .map-responsive iframe {
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            border-radius: 12px;
+        }
+
+    </style>
+
+</head>
+
+<body ng-app="myModuleKuch" ng-controller="myControllerKuch">
+
+    <!-- Navbar -->
+
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color:#007bff;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="pics/360_F_517134830_khmyeQ5beRJeAR4kIBgZKeygKAW151Dn.jpg"> <img
+                    src="pics/360_F_517134830_khmyeQ5beRJeAR4kIBgZKeygKAW151Dn.jpg" alt="Logo" width="80" height="35"
+                    class="rounded d-inline-block align-text-top"></a>
+            <span class="mx-auto fw-bold fs-4 " style="color:#fffaf5;">Tycons</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="index.html" style="color:#fffaf5;">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services" style="color:#fffaf5;">Our Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#developers" style="color:#fffaf5;">The Developer</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reachus" style="color:#fffaf5;">Reach Us</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex ">
+                    <button type="button" class="btn me-2 px-3 "
+                        style="background-color:#e6f0ff ; color: #007bff; font-weight: 600;" data-bs-toggle="modal"
+                        data-bs-target="#signup">Sign up </button>
+                    <button type="button" class="btn px-3 "
+                        style="background-color:#e6f0ff ; color: #007bff;font-weight:600;" data-bs-toggle="modal"
+                        data-bs-target="#Login">Login</button>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Carousel -->
+
+    <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="pics/img1.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="pics/img2.jpg" class="d-block w-100" alt="...">
+            </div>
+            <div class="carousel-item">
+                <img src="pics/img3.avif" class="d-block w-100" alt="...">
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+<!-- our services  -->
+    <div class="container mt-5  text-center" id="services">
+        <h2>Our Services</h2>
+        <div class="row justify-content-center g-4">
+            <div class="col-md-3">
+                <div class="card p-3  text-center " >
+                    <i class="fa-solid fa-trophy fa-4x text-gray-600 mt-2"></i>
+                    <h4>
+                        <div class="card-title mt-3">Tournament Listings</div>
+                    </h4>
+                    <p class="card-text">Browse and join a variety of sports tournaments across cities.</p>
+
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  p-3 text-center" >
+                    <i class="fa-solid fa-award fa-4x mt-2 text-success"></i>
+                    <h4>
+                        <div class="card-title mt-3">Award</div>
+                    </h4>
+                    <p class="card-text">Tounament have awards for players,view results,and view highlightsof the
+                        Tounament</p>
+
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  p-3 text-center" >
+                    <i class="fa-solid fa-calendar-check fa-4x text-warning mt-2"></i>
+                    <h4>
+                        <div class="card-title mt-3">Events Scheduling</div>
+                    </h4>
+                    <p class="card-text">Organizer are manage their tounaments and they are see player which are take
+                        part in their tounaments</p>
+
+
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card  p-3 text-center">
+                    <i class="fa-solid fa-users fa-4x text-danger mt-2"></i>
+                    <h4>
+                        <div class="card-title mt-3">Players Management</div>
+                    </h4>
+                    <p class="card-text">Register, manage your profile, and track your tournament participation.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- About developers  -->
+    <div class="container mt-5" id="developers">
+        <h2 class="text-center mb-4">Meet The Developers</h2>
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4">
+                <div class="card dev-card p-4 text-center h-100">
+                    <img src="pic/rajesh-sir.jpg" class="rounded-circle mx-auto mb-3"
+                        style="width:120px;height:120px;object-fit:cover;" alt="......">
+                    <h5 class="card-title">Rajesh K. Bansal</h5>
+                    <b>
+                        <p className="text-sm text-warning">Project Mentor</p>
+                    </b>
+                    <b>
+                        <p className="mt-2 text-gray-600">25 Years Experience</p>
+                    </b>
+                    <b>
+                        <p className="mt-2 text-gray-700 font-bold">Real Java Book Author</p>
+                    </b>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card dev-card p-3 text-center h-100">
+                    <img src="pic/Me.jpg" class="rounded-circle mx-auto mb-3"
+                        style="width:120px;height:120px;object-fit:cover;" alt=".....">
+                    <h5 class="card-title">Lakshya Goyal </h5><br>
+                    <b>
+                        <p class="card-text">Full Stack Developer</p>
+                    </b>
+                    <b>
+                        <p class="text-sm mt-2">Pursuing B.Tech from thapar Engineering College</p>
+                    </b>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- reach us  -->
+    <div class="container mt-5" id="reachus">
+        <h2 class="text-center mb-4">Reach Us</h2>
+        <div class="map-responsive mb-4 " >
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1042.978833074833!2d75.22854467258789!3d30.265146960224516!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sin!4v1753036216965!5m2!1sen!2sin"
+                width="600" height="450" style="border-radius: 12; position: absolute;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+
+    <!-- footer -->
+    <div class="footer" style="font-size:1.1rem; padding: 36px 0; background-color:#007bff ;">
+        <div class="container">
+            <div class="row text-center text-md-start">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3" style="color:#fffaf5;">About</h5>
+                    <p style="color:#fffaf5;">Tycons is your one-stop platform for discovering, joining, and managing
+                        sports tournaments across the country. Designed for players, organizers, and fans.</p>
+                </div>
+
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="mb-3" style="color:#fffaf5;">Contact</h5>
+                    <p style="color:#fffaf5; margin-bottom: 6px;">Email: lakshyagoyal584@gmail.com</p>
+                    <p style="color:#fffaf5; margin-bottom: 6px;">Phone: +91-7696005118</p>
+                </div>
+                <div class="col-md-4">
+                    <h5 class="mb-3" style="color:#fffaf5;">Social</h5>
+                    <a href="https://www.instagram.com/lakshya.goyal.5036/"
+                        style="color:#fffaf5; margin-right: 12px;"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="https://github.com/Lakshyagoyal866" style="color:#fffaf5; margin-right: 12px;"><i
+                            class="fab fa-github fa-lg"></i></a>
+                    <a href="https://www.linkedin.com/in/lakshya-goyal-070308229/" style="color:#fffaf5;"><i
+                            class="fab fa-linkedin fa-lg"></i></a>
+                </div>
+            </div>
+            <hr style="background:#bfa074; opacity:0.5;">
+            <div class="text-center" style="color:#fffaf5; font-size:1rem;">&copy; Tycons. Designed & Developed by
+                Lakshya Goyal & Rajesh K. Bansal</div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+    <!-- Signup -->
+    <div class="modal fade" id="signup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Sign up Modal</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="txtEmail" name="txtEmail"
+                                aria-describedby="emailHelp">
+                            <span id="chkEmail"></span>
+
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleInputPassword1" class="form-label"> Create Password</label><i
+                                class="fa-solid fa-eye " id="eye"></i>
+                            <input type="password" class="form-control" id="txtPwd" name="txtPwd">
+
+                            <span id="chkpass"></span>
+                        </div>
+
+                        <select class="form-select" aria-label="Default select example" id="combouser" name="combouser">
+                            <option selected>User Type </option>
+                            <option value="Player">Player</option>
+                            <option value="Organizer">Organizer</option>
+
+                        </select>
+
+
+
+                        <button type="button" class="btn btn-primary mt-5" id="fetchdata">Sign up </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Login[] -->
+    <div class="modal fade" id="Login" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Login Modal</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Email address</label>
+                            <input type="email" class="form-control" id="txtEmail2" name="txtEmail2"
+                                aria-describedby="emailHelp">
+
+                        </div>
+                        <div class="mb-3 ">
+                            <label for="exampleInputPassword1" class="form-label">Password</label> <i
+                                class="fa-solid fa-eye " id="eye2"></i>
+                            <input type="password" class="form-control" id="txtPwd2" name="txtPwd2">
+
+                        </div>
+                        <div class="mt-1 " style="float: right;">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#Forgetpass">forgot password?</a>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#signup">Signup</a>
+                        </div>
+
+                        <button type="button" class="btn btn-primary mt-5" id="fetchdata2">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for forget passward -->
+    <div class="modal fade" id="Forgetpass" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Forget Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-floating ">
+                        <input type="email" class="form-control" id="forgetEmail" placeholder="name@example.com"
+                            ng-model="forgetEmail">
+                        <label for="floatingInput">Email address</label>
+                    </div>
+                    <div class="form-floating" style="margin-top: 10%;">
+                        <input type="password" class="form-control" id="forgetPass" placeholder="Password"
+                            ng-model="forgetPass">
+                        <label for="floatingPassword">new Password</label> <i class="fa-solid fa-eye " id="eye3"></i>
+
+                    </div>
+                    <div style="margin-top: 10%;">
+                        <select class="form-select" aria-label="Default select example" id="confirmUser"
+                            ng-model="confirmUser">
+                            <option selected>Confirm User Type </option>
+                            <option value="Player">Player</option>
+                            <option value="Organizer">Organizer</option>
+                        </select>
+                    </div>
+
+                    <div class="form-floating mt-5">
+                        <input type="text" class="form-control" id="enteredotp" placeholder="enter 6 digit otp "
+                            ng-model="enteredotp">
+                        <label for="floatingInput">Enter Otp</label>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-3">
+                        <button class="btn btn-warning" ng-click="doRequestotp();">Send OTP</button>
+                        <button class="btn btn-info" ng-click="doVerification();" ng-disabled="!otpSent">Verify
+                            OTP</button>
+                    </div>
+                </div>
+
+
+
+                <div class="modal-footer mt-3">
+                    <button type="button" class="btn btn-primary px-3 py-2" ng-click="doFetchAll();">Update
+                        password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

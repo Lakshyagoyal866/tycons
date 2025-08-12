@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <title>Document</title>
+
+    <script>
+
+        function showAPrev(fileARef, AprevRef) {
+            const [file] = fileARef.files
+            if (file) {
+                AprevRef.src = URL.createObjectURL(file)
+            }
+        }
+
+        function showPPrev(filePRef, PprevRef) {
+            const [file] = filePRef.files
+            if (file) {
+                PprevRef.src = URL.createObjectURL(file)
+            }
+        }
+
+
+          $(document).ready(function () {
+         $("#searchdata2").click(function()
+            {
+                let email =$("#txtEmail3").val();
+                let obj={
+                        type:"get",
+                        url:"/player-search",                            // insert only email 
+                        data:{
+                            inputEmail1: email
+                        }
+                    }
+
+        $.ajax(obj).then(
+            function(responseJsonAry)
+            {
+                  let rname =responseJsonAry[0].rname;
+                let DOB =responseJsonAry[0].DOB;
+                let gender =responseJsonAry[0].gender;
+                let address=responseJsonAry[0].address;
+                let contact =responseJsonAry[0].contact;
+                let game =responseJsonAry[0].game;                                  // for send the data to frontend box that we made for each 
+                 let otherinfo=responseJsonAry[0].otherinfo;
+                    let acardpicurl=responseJsonAry[0].acardpicurl;
+                    let profilepicurl=responseJsonAry[0].profilepicurl;
+               
+                    $("#inputName").val(rname);
+                     $("#inputBith").val(DOB);
+                    $("#inputGender").val(gender);
+                    $("#inputAdr").val(address);
+                   $("#inputNum").val(contact);
+                     $("#inputGame").val(game);
+                    $("#textinfo").val(otherinfo);
+                  $("#adprev").prop("src", acardpicurl);
+                      $("#pprev").prop("src", profilepicurl);
+                      $("#hipic2").prop(acardpicurl);
+                     $("#hipic3").val(profilepicurl);
+                 
+            }).fail(function(err){ alert(err.message) })
+        })
+
+
+        })
+
+
+    </script>
+
+    <script>
+   function showUser()
+   {
+      let activeUser=localStorage.getItem("activeUser");
+      document.getElementById("inputEmail1").value=activeUser;
+   }
+</script>
+
+
+</head>
+
+<body onload="showUser();">
+    <form enctype="multipart/form-data" action="/Player-user" method="post">
+        <div class="row bg-primary text-white "> <span class="py-2 offset-md-5 ">
+                <h2>Player Profile</h2>
+            </span> </div>
+
+             <input type="hidden" id="Hipic2"name="hipic2">
+              <input type="hidden" id="Hipic3"name="hipic3">
+
+        <div class="container mx-auto row border rounded  mt-4 shadow py-3 px-5">
+
+            <div class="mb-3 col-md-6 mt-4">
+                <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="inputEmail1" name="inputEmail1" placeholder="name@example.com" readonly >
+            </div>
+
+            <div class="col-md-4 mt-4">
+                <button class="btn btn-dark px-5 py-2 mt-4" id="searchdata2" type="button"> Search </button>
+            </div>
+
+
+            <div class="row">
+                <div class="mb-3 mt-4 col-md-6">
+                    <label for="formFile" class="form-label">Upload front page of  Adhaar Card </label>
+                    <div class="d-flex align-items-center gap-5 mx-auto">
+                        <input class="form-control" type="file" id="acardPic" name="acardPic"
+                            onchange="showAPrev(acardPic,adprev)">
+                        <img src="pics/customer-support-service-vector-2642390.jpg" class="rounded float-end "
+                            id="adprev" height="150" width="150" alt="...">
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-4 col-md-6">
+                    <label for="formFile" class="form-label">Upload Profile Pic </label>
+                    <div class="d-flex align-items-center gap-5 mx-auto">
+                        <input class="form-control" type="file" id="pprofilePic" name="pprofilePic"
+                            onchange="showPPrev(pprofilePic,pprev)">
+                        <img src="pics/customer-support-service-vector-2642390.jpg" class="rounded float-end "
+                            id="pprev" height="150" width="150" alt="...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3 col-md-3 me-5 mt-5">
+                <label for="exampleFormControlInput1" class="form-label">Host Name</label>
+                <input type="text" class="form-control" name="inputName" id="inputName" placeholder="Full Name" disabled>
+            </div>
+
+            <div class="mb-3 col-md-2  mt-5">
+                <label for="exampleFormControlInput1" class="form-label">Date Of Birth</label>
+                <input type="date" class="form-control" name="inputBith" id="inputBith" disabled>
+            </div>
+
+            <div class="col-md-4  mt-5 mb-4 offset-md-1">
+                <label for="inputSports" class="form-label">Gender</label>
+                <select id="inputGender" name="inputGender" class="form-select" disabled>
+                    <option selected>Choose</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mt-4">
+                <label for="floatingInput" class="form-label">Address</label>
+                <input type="text" class="form-control" id="inputAdr" name="inputAdr" required>
+            </div>
+
+            <div class="col-md-4 mt-4 offset-md-1  ">
+                <label for="floatingInput" class="form-label">Contact Number </label>
+                <input type="text" class="form-control" id="inputNum" name="inputNum" required>
+            </div>
+
+            <div class="col-md-3 me-5 mt-4 mb-4">
+                <label for="inputGame" class="form-label">Your Game</label>
+                <select id="inputGame" name="inputGame" class="form-select" required>
+                    <option selected>Choose</option>
+                    <option>Football</option>
+                    <option>Cricket</option>
+                    <option>Badminton</option>
+                    <option>Kabaddi</option>
+                    <option>Hockey</option>
+                    <option>Tennis</option>
+                    <option>Wresling</option>
+                    <option>Kho-Kho</option>
+                </select>
+            </div>
+
+
+            <div class="mb-4">
+                <label for="exampleFormControlTextarea1" class="form-label">Other Information </label>
+                <textarea class="form-control" id="inputinfo" name="inputinfo" rows="3"></textarea>
+            </div>
+
+
+            <div class="col-md-4 mt-4">
+                <button type="submit" class="btn btn-primary px-4 py-2 mt-4">Update Data </button>
+                <button type="submit" class=" offset-md-1 btn btn-primary px-4 py-2 mt-4"
+                    formaction="/Playerupdate-user"> Modify </button>
+            </div>
+
+
+        </div>
+
+
+        <div class="row bg-primary text-white " style="transform: translateY(100px);"> <span class="offset-md-5 ">Thanks
+            </span> </div>
+
+
+    </form>
+
+</body>
+
+</html>

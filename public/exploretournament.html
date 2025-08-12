@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <title>Document</title>
+</head>
+<style>
+  .card{
+    transition: all 0.7s;
+
+  }
+  .card:hover{
+    transform: scale(1.09);
+  }
+</style>
+ <script>
+      var mymodule = angular.module("kuchModule", []);
+
+      mymodule.controller("kuchController", function ($scope, $http) {
+        $scope.jsonArray = [];
+              $scope.inputvillage=null;
+            $scope.inputsport=null;
+              $scope.txtage=null;
+         
+
+
+        $scope.doFetchAll = function () {
+
+          var url = "/do-fetch-event?cityKuch="+$scope.inputvillage+"&sportKuch="+ $scope.inputsport+"&ageKuch="+$scope.txtage;
+
+         
+          $http.get(url).then(allGoodFx, someBadFx);
+          function allGoodFx(response) {
+            //resp in JSON array
+            // alert(JSON.stringify(response.data));
+            $scope.jsonArray = response.data;
+          }
+
+          function someBadFx(response) {
+            alert(JSON.stringify(response.data));
+          }
+        }
+        //----------------------
+      $scope.cities=[{}];
+  $scope.doFetchAlCities = function () {
+                var url = "/do-fetch-all-cities";
+
+                $http.get(url).then(allGoodFx, someBadFx);
+                function allGoodFx(response) {
+                    //resp in JSON array
+                    // alert(JSON.stringify(response.data));
+                    $scope.cities = response.data;
+                }
+
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
+                }
+            };
+//=================================================================
+         $scope.sport=[{}];
+  $scope.doFetchAlSport = function () {
+                var url = "/do-fetch-all-sport";
+
+                $http.get(url).then(allGoodFx, someBadFx);
+                function allGoodFx(response) {
+                    //resp in JSON array
+                    // alert(JSON.stringify(response.data));
+                    $scope.sport = response.data;
+                }
+
+                function someBadFx(response) {
+                    alert(JSON.stringify(response.data));
+                }
+            };
+
+        //==================================================
+        $scope.oneRecord={};
+        $scope.doShowDetails=function(index)
+        {
+            //alert(JSON.stringify($scope.jsonArray[index]))
+            $scope.oneRecord=$scope.jsonArray[index];
+
+        }
+    
+
+  //===================for participate in tournament=====================================
+
+  $scope.participatetournament=function(obj){
+
+ 
+
+   let activeUser=localStorage.getItem("activeUser");
+   let tournamentid=obj.rid;
+   let organizerEmail=obj.email;
+
+   var url="/participate-tounament?pEmailKuch="+activeUser+"&tidKuch="+ tournamentid+"&orgEmailKuch="+organizerEmail;
+
+   $http.get(url).then(allGoodFx,someBadFx)
+   function allGoodFx(response){
+
+    alert(response.data);
+
+   }
+   function someBadFx(response)
+   {
+    alert("Error while participating.");
+   }
+  };
+//=============end of participate in tounament ===================
+});
+
+ </script>
+
+<body ng-app="kuchModule" ng-controller="kuchController"  ng-init="doFetchAlCities(); doFetchAlSport();" >
+    <div class="row bg-primary text-white ">
+        <span class="py-2 offset-md-5 ">
+            <h2>Explore Events </h2>
+        </span>
+    </div>
+
+     <div class="container">
+            <div class="row">
+
+                <div class="col-md-3 me-5 mt-4 mb-4">
+                <label for="inputGame" class="form-label" >Your Game</label>
+                <select id="inputsport" name="inputsport" class="form-select"  ng-model="inputsport" required >
+                    <option selected disabled value="Choose">Choose</option>
+                    <option ng-repeat="obj in sport" value="{{obj.sports}}">{{obj.sports}}</option>
+                 
+                </select>
+            </div>
+
+            <div class="col-md-3 me-5 mt-4 mb-4">
+                <label for="inputvillage" class="form-label">City</label>
+                <select id="inputvillage" name="inputvillage" class="form-select" ng-model="inputvillage" required >
+                    <option selected disabled value="Choose" >Choose</option>
+                    <option ng-repeat="obj in cities" value="{{obj.city}}">{{obj.city}}</option>
+                </select>
+            </div>
+
+             <div class="col-md-3 mt-4 ">
+            <label for="floatingInput" class="form-label">AGE</label>
+            <input type="text" class="form-control" id="txtage" name="txtage" ng-model="txtage">
+        </div>
+            <center>
+                <div class="col-md-4 mt-4">
+                 <button class="btn btn-dark px-5 py-2 mt-4"  type="button" ng-click="doFetchAll();"> Fetch data </button>
+                </div>
+            </center>
+            
+            </div>
+        </div>
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 p-3 mb-4 mt-4 "  ng-repeat="obj in jsonArray">
+                <div class="card" >
+                    <div class="card-body">
+                        <h5 class="card-title"><center>{{obj.title}}</center></h5>
+                        <div class="mt-4">
+                        <p > Game: {{obj.sports}} </p>
+                         <p> Address: {{obj.address}} </p>
+                          <p> Time: {{obj.ttime}} </p>
+                          </div>
+                        <a href="#" class="btn btn-primary mt-5" data-bs-toggle="modal" data-bs-target="#detailsModal" ng-click="doShowDetails($index);" >See Details</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"> <center>{{oneRecord.title}}</center></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        
+        <p>
+            Emailid : {{oneRecord.email}}
+        </p>
+         <p>
+           Host Name  : {{oneRecord.hname}}
+        </p>
+         <p>
+          Contact Number: {{oneRecord.mobile}}
+        </p>
+         <p>
+            Tournament Date : {{oneRecord.tdate}}
+        </p>
+         <p>
+            Tournament Time : {{oneRecord.ttime}}
+        </p>
+         <p>
+           Last date of registration: {{oneRecord.rdate}}
+        </p>
+         <p>
+          Minimum age : {{oneRecord.minage}}
+        </p>
+         <p>
+           Maximum Age: {{oneRecord.maxage}}
+        </p>
+         <p>
+          City: {{oneRecord.city}}
+        </p>
+         <p>
+          Registration Fees : {{oneRecord.fees}}
+        </p>
+        <p>
+          Prize : {{oneRecord.prize}}
+        </p>
+      </div>
+      <div class="modal-footer" >
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="participatetournament(oneRecord);">Participate in Tounament </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+
+</html>

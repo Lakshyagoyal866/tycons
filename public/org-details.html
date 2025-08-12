@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<script>
+     function showPrev(fileRef, prevRef) {
+            const [file] = fileRef.files
+            if (file) {
+                prevRef.src = URL.createObjectURL(file)
+            }
+        }
+// for searching a data 
+          $(document).ready(function () {
+         $("#searchdata").click(function()
+            {
+                let email =$("#txtEmail3").val();
+                let obj={
+                        type:"get",
+                        url:"/search",                            // insert only email 
+                        data:{
+                            txtEmail3: email,
+                        }
+                    }
+
+        $.ajax(obj).then(
+            function(responseJsonAry)
+            {
+                  let organame =responseJsonAry[0].organame;
+                let regnumber =responseJsonAry[0].regnumber;
+                let address =responseJsonAry[0].address;
+                let city=responseJsonAry[0].city;
+                let sports =responseJsonAry[0].sports;
+                let insta =responseJsonAry[0].insta;
+                 let head =responseJsonAry[0].head;                                  // for send the data to frontend box that we made for each 
+                  let contact =responseJsonAry[0].contact;
+                 let otherinfo=responseJsonAry[0].otherinfo;
+               
+                 $("#prev").prop("src",responseJsonAry[0].picurl);
+                    $("#txtOrg").val(organame);
+                     $("#txtRig").val(regnumber);
+                    $("#txtAdr").val(address);
+                    $("#txtCity").val(city);
+                   $("#txtSport").val(sports);
+                     $("#txtInsta").val(insta);
+                      $("#txtHead").val(head);
+                   $("#txtNum").val(contact);
+                    $("#textinfo").val(otherinfo);
+                  $("#prev").prop("src", responseJsonAry[0].picurl);
+                     $("#hipic").val(responseJsonAry[0].picurl);
+         
+                 
+            }).fail(function(err){ alert(err.message) })
+        })
+
+
+        })
+
+</script>
+
+<script>
+   function showUser()
+   {
+      let activeUser=localStorage.getItem("activeUser");
+      document.getElementById("txtEmail3").value=activeUser;
+   }
+</script>
+<body onload="showUser();">
+    <form action="/orgdetails-page"  method="post" enctype="multipart/form-data" >
+
+        
+
+    <div class="row bg-primary text-white "> <span class="py-2 offset-md-5 "><h2>Client Profile</h2></span> </div>
+    <div class="container mx-auto row rounded border py-2 mt-4 shadow">
+
+                <input type="hidden" id="hipic"name="hipic">
+        
+        <div class=" mt-4  col-md-6">
+             <label for="floatingInput" class="form-label">Email address</label>
+            <input type="email" name="txtEmail3" id="txtEmail3" class="form-control"  placeholder="name@example.com" readonly>
+        </div>
+
+        <div class="col-md-4 mt-4">
+            <button class="btn btn-dark px-5 py-2 mt-4" id="searchdata"  type="button"> Search </button>
+        </div>
+
+        <div class="col-md-4 mt-4">
+            <label for="floatingInput" class="form-label">Organisation Name</label>
+            <input type="text" name="txtOrg" class="form-control" id="txtOrg">
+        </div>
+
+        <div class="col-md-4 mt-4 offset-md-2">
+            <label for="floatingInput" class="form-label">registration No.</label>
+            <input type="text" name="txtRig" class="form-control" id="txtRig">
+        </div>
+
+        <div class="col-md-6 mt-4">
+            <label for="floatingInput" class="form-label">Address</label>
+            <input type="text" class="form-control" id="txtAdr" name="txtAdr">
+        </div>
+
+        <div class="col-md-3 mt-4 offset-md-1">
+            <label for="floatingInput" class="form-label">City</label>
+            <input type="text" class="form-control" id="txtCity" name="txtCity">
+        </div>
+
+        <div class="col-md-8 mt-4 ">
+            <label for="floatingInput" class="form-label">Deal in Sports</label>
+            <input type="text" class="form-control"name="txtSport" id="txtSport">
+        </div>
+        <div class="col-md-4 mt-4  ">
+            <label for="floatingInput" class="form-label">Instagram Link</label>
+            <input type="text" class="form-control" id="txtInsta" name="txtInsta">
+        </div>
+
+        <div class="col-md-4 mt-4  ">
+            <label for="floatingInput" class="form-label">Organisation Head Name </label>
+            <input type="text" class="form-control" id="txtHead" name="txtHead">
+        </div>
+
+        <div class="col-md-4 mt-4 offset-md-1  ">
+            <label for="floatingInput" class="form-label">Contact Number </label>
+            <input type="text" class="form-control" id="txtNum" name="txtNum">
+        </div>
+
+
+        <div class="mb-3 mt-4 col-md-6">
+            <label for="formFile" class="form-label">Organisation registration Cirtificate pic </label>
+            <div class="d-flex align-items-center gap-5 mx-auto">
+            <input class="form-control"  type="file" id="profilePic" name="profilePic" onchange="showPrev(profilePic,prev)">
+            <img src="pics/customer-support-service-vector-2642390.jpg" class="rounded float-end " id="prev" height="100" width="100" alt="...">
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="exampleFormControlTextarea1" class="form-label">Other Information </label>
+            <textarea class="form-control" id="textinfo" name="textinfo" rows="3"></textarea>
+        </div>
+
+
+       
+
+
+          <div class="col-md-4 mt-4">
+            <button type="submit"  class="btn btn-primary px-4 py-2 mt-4" >Send to server </button>
+            <button type="submit" class=" offset-md-1 btn btn-primary px-4 py-2 mt-4" formaction="/update-user"> Modify </button>
+        </div>
+
+    </div>
+
+
+    <div class="row bg-primary text-white " style="transform: translateY(100px);"> <span class="offset-md-5 " >Thanks  </span> </div>
+      </form>
+</body>
+</html>

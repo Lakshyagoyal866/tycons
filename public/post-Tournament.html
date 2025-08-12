@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        $(document).ready(function(){
+
+            // ajax for post tournaments 
+
+             $("#listevent").click(function () {
+
+                // alert(JSON.stringify(document))
+
+                let email = $("#inputEmail").val();
+                let hname= $("#txtName").val();
+                let mobile = $("#txtPhone").val();
+                 let title = $("#txtTitle").val();
+                let tdate = $("#txtDate").val();
+                let ttime = $("#txtTime").val();
+                let address = $("#inputAddress").val();
+                 let city = $("#inputCity").val();
+                let sports = $("#inputSports").val();
+                let maxage = $("#inputMage").val();
+                 let minage = $("#inputMinage").val();
+                let rdate = $("#inputDate").val();
+                 let fees = $("#inputFee").val();
+                let prize = $("#inputprize").val();
+               
+
+                // alert(email+" "+hname+" "+title)
+
+                let obj = {
+                    type: "get",
+                    url: "/Tournament-page",
+                    data: {
+                        inputEmail: email,
+                        txtName: hname,
+                        txtPhone: mobile,
+                        txtTitle: title,
+                        txtDate: tdate,                 //for inserting a data 
+                        txtTime:ttime,
+                        inputAddress: address,
+                        inputCity: city,
+                        inputSports: sports,
+                        inputMage: maxage,
+                        inputMinage: minage,
+                        inputDate: rdate,
+                        inputFee: fees,
+                         inputprize: prize
+                    }
+                }
+
+                $.ajax(obj).then(
+                    function (responseJsonAry) {
+                        alert(responseJsonAry);             // for response that we send 
+
+                    }).fail(function (err) {
+                        alert(err.message);
+                    })
+
+
+            })
+        })
+
+    </script>
+    <script>
+      function showUser()
+      {
+        let activeUser=localStorage.getItem("activeUser");
+        document.getElementById("inputEmail").value=activeUser;
+    }
+    </script>
+</head>
+
+<body onload="showUser();">
+    <form enctype="multipart/form-data">
+
+
+        <div class="row bg-primary text-white "> <span class="py-2 offset-md-5 ">
+                <h2>Post Tournaments</h2>
+            </span> </div>
+
+        <div class="container mx-auto row border rounded  mt-4 shadow py-3 px-5">
+
+            <div class="mb-3 col-md-6 mt-4">
+                <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="name@example.com" disabled>
+            </div>
+
+            <div class="mb-3 col-md-3 me-5 mt-4">
+                <label for="exampleFormControlInput2" class="form-label">Host Name</label>
+                <input type="text" class="form-control" name="txtName" id="txtName" placeholder="Full Name" required>
+            </div>
+
+            <div class="mb-3 col-md-4 me-5 mt-4">
+                <label for="exampleFormControlInput3" class="form-label">Contact Number</label>
+                <input type="text" class="form-control"name="txtPhone" id="txtPhone" placeholder="Enter Number" required>
+            </div>
+
+
+            <div class="mb-3 col-md-4 me-5 mt-4">
+                <label for="exampleFormControlInput4" class="form-label">Event Title</label>
+                <input type="text" class="form-control" name="txtTitle" id="txtTitle" placeholder="Title" required>
+            </div>
+
+            <div class="mb-3 col-md-2  mt-4">
+                <label for="exampleFormControlInput5" class="form-label">Date</label>
+                <input type="date" class="form-control" name="txtDate" id="txtDate" required>
+            </div>
+
+            <div class="mb-3 col-md-2  mt-4">
+                <label for="exampleFormControlInput6" class="form-label">Time</label>
+                <input type="time" class="form-control" name="txtTime" id="txtTime" required>
+            </div>
+
+
+            <div class="col-md-6 mt-4 mb-4">
+                <label for="inputAddress" class="form-label">Address</label>
+                <input type="text" class="form-control" id="inputAddress" name="inputAddress" placeholder="1234 Main St" required>
+            </div>
+
+            <div class="col-md-4 mt-4 mb-4">
+                <label for="inputCity" class="form-label">City</label>
+                <input type="text" class="form-control" name="inputCity" id="inputCity" required>
+            </div>
+
+            <div class="col-md-3 me-5 mt-4 mb-4">
+                <label for="inputSports" class="form-label" >Sports Catagory</label>
+                <select id="inputSports" name="inputSports" class="form-select" >
+                    <option selected>Choose</option>
+                    <option>Football</option>
+                    <option>Cricket</option>
+                    <option>Badminton</option>
+                    <option>Kabaddi</option>
+                    <option>Hockey</option>
+                    <option>Tennis</option>
+                    <option>Wresling</option>
+                    <option>Kho-Kho</option>
+                </select>
+            </div>
+
+             <div class="col-md-2 mt-4 me-5  mb-4">
+                <label for="inputMinage" class="form-label">Min. Age</label>
+                <input type="number" class="form-control" id="inputMinage" name="inputMinage" placeholder="Minimum" required>
+            </div>
+
+              <div class="col-md-2 mt-4    mb-4">
+                <label for="inputMage" class="form-label">Max. Age</label>
+                <input type="number" class="form-control" id="inputMage" name="inputMage" placeholder="Maximum" required>
+            </div>
+           
+       <div class="row gap-5">
+             <div class="mb-3 col-md-3  mt-4">
+                <label for="exampleFormControlInput1" class="form-label">Last date of Registration</label>
+                <input type="date" class="form-control" id="inputDate" name="inputDate" required >
+            </div>
+
+              <div class="col-md-3  mt-4  mb-4">
+                <label for="inputFee" class="form-label">Registration Fees</label>
+                <input type="number" class="form-control" id="inputFee" placeholder="Fees" name="inputFee" required>
+            </div>
+
+             <div class="col-md-3  mt-4  mb-4">
+                <label for="inputprize" class="form-label">Prize</label>
+                <input type="number" class="form-control" id="inputprize" placeholder="Prize" name="inputprize" required>
+            </div>
+      </div>
+
+
+
+       <div class="col-md-4 mt-4">
+             <input type="button" value="post event" class="btn btn-primary px-5 py-3 mt-5" id="listevent">
+        </div>
+
+        </div>
+
+         <div class="row bg-primary text-white " style="transform: translateY(100px);"> <span class="offset-md-6 " >Thanks  </span> </div>
+    </form>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <title>Document</title>
+</head>
+
+ <script>
+
+
+       let mymodule= angular.module("myModuleKuch",[]);
+       let myController=mymodule.controller("myControllerKuch",function($scope,$http)
+       {
+        $scope.jsonAry=[];
+        $scope.doFetchAll=function()
+        {
+            var url="/player-records";
+
+            $http.get(url).then(fxSuccess,fxFail);
+
+            function fxSuccess(response)
+            {
+            //    alert(JSON.stringify(response.data));
+                $scope.jsonAry=response.data;
+            }
+            function fxFail(err)
+            {
+                alert(err.data);
+            }
+        }
+
+
+           //==================================================
+        $scope.lavi={};
+        $scope.doShowDetails=function(index)
+        {
+            //alert(JSON.stringify($scope.jsonArray[index]))
+            $scope.lavi=$scope.jsonAry[index];
+
+        }
+
+
+       })
+
+
+    </script>
+
+
+
+<body ng-app="myModuleKuch" ng-controller="myControllerKuch" ng-init="doFetchAll();">
+     <nav class="navbar bg-primary">
+            <div class="container-fluid"> <a class="navbar-brand ">
+                    <img src="pics/360_F_517134830_khmyeQ5beRJeAR4kIBgZKeygKAW151Dn.jpg" alt="Logo" width="80"
+                        height="35" class="rounded d-inline-block align-text-top">
+                </a></div>
+        </nav>
+
+          <div class="text-brown mt-4">
+            <center>
+                <p class="fs-1 fw-medium">player Admin Console </p>
+            </center>
+        </div>
+
+
+         <div class="container mt-5">
+        <table class="table table-striped table-hover">
+             <thead>
+                        <tr>
+                            <th scope="col">Email address</th>
+                            <th scope="col">Profile pic  </th>
+                            <th scope="col">player Name</th>
+                            <th scope="col">DOB</th>
+                            <th scope="col">Gender</th>
+                             <th scope="col">Address</th>
+                             <th scope="col">See Details</th>
+                        </tr>
+                    </thead>
+
+                      <tbody>
+                  <tr ng-repeat="obj in jsonAry">
+                  
+                    <td>{{obj.email}}</td>
+                    <td> <a href={{obj.profilepicurl}}> 
+                <img src={{obj.profilepicurl}} width="50" height="50">
+                </a></td>
+                    <td>{{obj.rname}}</td> 
+                    <td>{{obj.DOB}}</td> 
+                     <td>{{obj.gender}}</td>
+                       <td>{{obj.address}}</td>
+                       <td> <a href="#" class="btn btn-primary mt-5" data-bs-toggle="modal" data-bs-target="#detailsModal" ng-click="doShowDetails($index);" >See Details</a></td>
+
+                    
+                  </tr>
+                  </tbody>
+        </table>
+        </div>
+
+
+
+
+
+
+
+
+
+
+            <!-- Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel"> <center>Details</center></h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        
+        <p>
+            Emailid : {{lavi.email}}
+        </p>
+         <p>
+           player Name  : {{oneRecord.rname}}
+        </p>
+        <p>
+            Profile pic:  <a href={{lavi.profilepicurl}}><img src={{lavi.profilepicurl}} width="50" height="50"></a>
+            adhaar card  pic:  <a href={{lavi.acardpicurl}}><img src={{lavi.acardpicurl}} width="50" height="50"></a>
+        </p>
+         <p>
+          Contact Number: {{lavi.contact}}
+        </p>
+         <p>
+         Date of birth : {{lavi.DOB}}
+        </p>
+         <p>
+            Gender : {{lavi.gender}}
+        </p>
+         <p>
+           Game played : {{lavi.game}}
+        </p>
+         <p>
+          Address : {{lavi.address}}
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    
+</body>
+</html>

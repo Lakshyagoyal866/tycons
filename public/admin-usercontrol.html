@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
+
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.3/angular.min.js"></script>
+    <title>Document</title>
+    <script>
+
+
+let mymodule= angular.module("myModuleKuch",[]);
+       let myController=mymodule.controller("myControllerKuch",function($scope,$http)
+       {
+        $scope.jsonAry=[];
+        $scope.doFetchAll=function()
+        {
+            var url="/all-records";
+
+            $http.get(url).then(fxSuccess,fxFail);
+
+            function fxSuccess(response)
+            {
+            //    alert(JSON.stringify(response.data));
+                $scope.jsonAry=response.data;
+            }
+            function fxFail(err)
+            {
+                alert(err.data);
+            }
+        }
+
+        $scope.jsonAry=[];
+        $scope.doBlock=function(email)
+        {
+            // alert();
+            let url="/doBlock?emailKuch="+email;
+            $http.get(url).then(fxSuccess,fxFail);
+
+            function fxSuccess(response)
+            {
+                $scope.doFetchAll();
+            //   alert(JSON.stringify(response.data));
+                $scope.jsonAry=response.data;
+            }
+            function fxFail(err)
+            {
+                alert(err.data);
+            }
+        }
+
+        $scope.jsonAry=[];
+        $scope.doResume=function(email)
+        {
+        
+            let url="/Resume?emailKuch="+email;
+            $http.get(url).then(fxSuccess,fxFail);
+
+            function fxSuccess(response)
+            {
+                $scope.doFetchAll();
+//alert(JSON.stringify(response.data));
+                $scope.jsonAry=response.data;
+            }
+            function fxFail(err)
+            {
+                alert(err.data);
+            }
+        }
+           
+
+       })
+
+
+    </script>
+</head>
+
+<body ng-app="myModuleKuch" ng-controller="myControllerKuch" ng-init="doFetchAll();" >
+    <form method="get" enctype="multipart/form-data" >
+
+
+        <nav class="navbar bg-primary">
+            <div class="container-fluid"> <a class="navbar-brand ">
+                    <img src="pics/360_F_517134830_khmyeQ5beRJeAR4kIBgZKeygKAW151Dn.jpg" alt="Logo" width="80"
+                        height="35" class="rounded d-inline-block align-text-top">
+                </a></div>
+        </nav>
+
+        <div class="text-brown mt-4">
+            <center>
+                <p class="fs-1 fw-medium">User Admin Console </p>
+            </center>
+        </div>
+
+        <div class="container mt-5">
+        <table class="table table-striped table-hover">
+             <thead>
+                        <tr>
+                            <th scope="col">Email address</th>
+                            <th scope="col">User Type </th>
+                            <th scope="col">Date of Registration</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Operation</th>
+                        </tr>
+                    </thead>
+
+                      <tbody>
+                  <tr ng-repeat="obj in jsonAry">
+                  
+                    <td>{{obj.email}}</td>
+                    <td>{{obj.combo}}</td>
+                    <td>{{obj.dos}}</td> 
+                     <td>{{obj.stat}}</td>
+                    <td>
+                        <input type="button" ng-click="doBlock(obj.email);" value="Block" class="btn btn-primary px-4 py-2 ">
+                          <input type="button" ng-click="doResume(obj.email);" value="Unblock" class="btn btn-primary px-4 py-2 ">
+                    </td>
+                  </tr>
+                  </tbody>
+        </table>
+        </div>
+
+    </form>
+
+</body>
+
+</html>
